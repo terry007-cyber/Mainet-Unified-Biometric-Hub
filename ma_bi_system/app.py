@@ -13,7 +13,7 @@ app = Flask(__name__)
 DB_CONFIG = {
     'dbname': 'ma_bi_system',
     'user': 'postgres',
-    'password': 'terry@1122', # <--- Verify Password
+    'password': 'YOUR_PASSWORD_HERE', # <--- Verify Password
     'host': 'localhost',
     'port': '5432'
 }
