@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAINET SECURITY HUB</title>
+    <style>
+        :root {
+            --primary: #0f3460;
+            --secondary: #16213e;
+            --accent-face: #007bff; /* Blue */
+            --accent-finger: #28a745; /* Green */
+            --accent-iris: #6f42c1; /* Purple */
+            --text: #e0e0e0;
+        }
+        body { margin: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #1a1a2e; color: var(--text); }
+        
+        /* HEADER */
+        .header { background: var(--secondary); padding: 40px 20px; text-align: center; border-bottom: 3px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .header h1 { margin: 0; font-size: 3rem; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .header p { color: #a2a8d3; margin-top: 10px; font-size: 1.2rem; }
+
+        /* GRID */
+        .container { display: flex; justify-content: center; align-items: stretch; gap: 30px; padding: 50px 20px; flex-wrap: wrap; }
+        
+        /* CARDS */
+        .card { 
+            background: var(--secondary); 
+            width: 350px; 
+            padding: 30px; 
+            border-radius: 15px; 
+            text-align: center; 
+            transition: transform 0.3s, box-shadow 0.3s; 
+            position: relative; 
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+        /* ICONS & TITLES */
+        .icon { font-size: 60px; margin-bottom: 20px; display: block; }
+        .card h2 { margin: 0 0 15px 0; font-size: 2rem; }
+        
+        /* FEATURE LIST */
+        .features { text-align: left; margin-bottom: 30px; color: #a2a8d3; font-size: 0.9rem; line-height: 1.6; }
+        .features li { list-style: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 5px 0; }
+        .features li::before { content: "✓ "; font-weight: bold; }
+
+        /* BUTTONS */
+        .btn { display: inline-block; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1rem; color: white; transition: 0.3s; width: 80%; }
+        
+        /* COLOR CODING */
+        /* FACE */
+        .card.face { border-top: 5px solid var(--accent-face); }
+        .card.face .icon { color: var(--accent-face); }
+        .card.face .features li::before { color: var(--accent-face); }
+        .btn-face { background: var(--accent-face); box-shadow: 0 0 15px rgba(0, 123, 255, 0.4); }
+        .btn-face:hover { background: #0056b3; box-shadow: 0 0 25px rgba(0, 123, 255, 0.6); }
+
+        /* FINGER */
+        .card.finger { border-top: 5px solid var(--accent-finger); }
+        .card.finger .icon { color: var(--accent-finger); }
+        .card.finger .features li::before { color: var(--accent-finger); }
+        .btn-finger { background: var(--accent-finger); box-shadow: 0 0 15px rgba(40, 167, 69, 0.4); }
+        .btn-finger:hover { background: #1e7e34; box-shadow: 0 0 25px rgba(40, 167, 69, 0.6); }
+
+        /* IRIS */
+        .card.iris { border-top: 5px solid var(--accent-iris); }
+        .card.iris .icon { color: var(--accent-iris); }
+        .card.iris .features li::before { color: var(--accent-iris); }
+        .btn-iris { background: var(--accent-iris); box-shadow: 0 0 15px rgba(111, 66, 193, 0.4); }
+        .btn-iris:hover { background: #5a32a3; box-shadow: 0 0 25px rgba(111, 66, 193, 0.6); }
+
+        .footer { text-align: center; color: #555; padding: 20px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>MAINET SECURITY HUB</h1>
+    <p>Unified Multi-Modal Biometric Authentication System</p>
+</div>
+
+<div class="container">
+    
+    <!-- MODULE 1: FACE -->
+    <div class="card face">
+        <span class="icon">👤</span>
+        <h2>Face ID</h2>
+        <ul class="features">
+            <li><strong>Biometric:</strong> Facial Landmarks (68 pts)</li>
+            <li><strong>Security:</strong> Anti-Blur & Group Rejection</li>
+            <li><strong>Verification:</strong> 1:N Database Search</li>
+            <li><strong>Forensics:</strong> 1:1 Side-by-Side Comparator</li>
+        </ul>
+        <a href="http://127.0.0.1:5000" target="_blank" rel="noopener noreferrer" class="btn btn-face">Launch Face System</a>
+    </div>
+
+    <!-- MODULE 2: FINGERPRINT -->
+    <div class="card finger">
+        <span class="icon">🖐️</span>
+        <h2>Fingerprint</h2>
+        <ul class="features">
+            <li><strong>Biometric:</strong> SIFT Ridge Patterns</li>
+            <li><strong>Security:</strong> Face/Object Filter</li>
+            <li><strong>Visualization:</strong> Green Match Lines</li>
+            <li><strong>Forensics:</strong> 1:1 Manual Comparator</li>
+        </ul>
+        <a href="http://127.0.0.1:5001" target="_blank" rel="noopener noreferrer" class="btn btn-finger">Launch Finger System</a>
+    </div>
+
+    <!-- MODULE 3: IRIS -->
+    <div class="card iris">
+        <span class="icon">👁️</span>
+        <h2>Iris Scan</h2>
+        <ul class="features">
+            <li><strong>Biometric:</strong> Texture Feature Extraction</li>
+            <li><strong>Security:</strong> Haar Cascade Liveness Check</li>
+            <li><strong>Verification:</strong> High-Threshold Matching</li>
+            <li><strong>Forensics:</strong> 1:1 Manual Comparator</li>
+        </ul>
+        <a href="http://127.0.0.1:5002" target="_blank" rel="noopener noreferrer" class="btn btn-iris">Launch Iris System</a>
+    </div>
+
+</div>
+
+<div class="footer">
+    &copy; 2026 Mainet Biometric Systems. All Systems Operational.
+</div>
+
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fingerprint Biometric System</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 2rem auto; background-color: #e9ecef; color: #333; }
+        .container { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-top: 5px solid #28a745; }
+        h1 { text-align: center; color: #28a745; margin-bottom: 30px; }
+        .box { border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px; background-color: #fafafa; }
+        h2 { margin-top: 0; font-size: 1.2rem; color: #444; border-bottom: 2px solid #28a745; padding-bottom: 10px; display: inline-block; }
+        label { display: block; margin: 10px 0 5px; font-weight: bold; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #28a745; color: white; border: none; padding: 12px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; width: 100%; }
+        button:hover { background-color: #218838; }
+        .result { margin-top: 15px; padding: 15px; border-radius: 5px; display: none; font-weight: bold; text-align: center; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .preview { max-width: 100%; height: 100px; object-fit: contain; margin-top: 10px; border-radius: 5px; display: none; border: 1px dashed #ccc;}
+        
+        .btn-compare {
+            background-color: #007bff;
+            margin-top: 15px;
+        }
+        .btn-compare:hover {
+            background-color: #0056b3;
+        }
+        
+        /* MATCH IMAGE STYLE */
+        .match-pattern { 
+            width: 100%; 
+            margin-top: 15px; 
+            border: 2px solid #28a745; 
+            border-radius: 8px; 
+            display: none; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #matchPatternManual.match-pattern {
+            border-color: #007bff;
+        }
+        .desc-muted {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .manual-comparator-heading {
+            border-bottom-color: #007bff;
+            color: #0056b3;
+        }
+        .box-manual-comparator {
+            border-top: 4px solid #007bff;
+        }
+        .flex-row {
+            display: flex;
+            gap: 16px;
+        }
+        .flex-1 {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Phase 2: Fingerprint System</h1>
+
+    <!-- 1. REGISTRATION -->
+    <div class="box">
+        <h2>1. Register Fingerprint</h2>
+        <form id="registerForm">
+            <label>User Name:</label>
+            <input type="text" id="regName" required placeholder="Enter Name">
+            <label for="regPhoto">Upload Fingerprint Image:</label>
+            <input type="file" id="regPhoto" accept="image/*" required onchange="showPreview(this, 'regPreview')" title="Upload Fingerprint Image">
+            <img id="regPreview" class="preview">
+            <button type="submit">Scan & Register</button>
+        </form>
+        <div id="regResult" class="result"></div>
+    </div>
+
+    <!-- 2. SERVER IDENTIFICATION -->
+    <div class="box">
+        <h2>2. Server Identification (1:N)</h2>
+        <p class="desc-muted">Match uploaded image against the entire database.</p>
+        <form id="identifyForm">
+            <label for="checkPhoto">Upload Fingerprint to Check:</label>
+            <input type="file" id="checkPhoto" accept="image/*" required onchange="showPreview(this, 'authPreview')" title="Upload fingerprint image to check">
+            <img id="authPreview" class="preview">
+            <button type="submit">Search Database</button>
+        </form>
+        <div id="idResult" class="result"></div>
+        <img id="matchPatternDB" class="match-pattern">
+    </div>
+
+    <!-- 3. MANUAL COMPARISON -->
+    <div class="box box-manual-comparator">
+        <h2 class="manual-comparator-heading">3. Manual Comparator (1:1)</h2>
+        <p class="desc-muted">Upload TWO images to compare them directly.</p>
+        <form id="verifyForm">
+            <div class="flex-row">
+                <div class="flex-1">
+                    <label for="fileA">Fingerprint A:</label>
+                    <input type="file" id="fileA" accept="image/*" required onchange="showPreview(this, 'prevA')" title="Upload Fingerprint A image">
+                    <img id="prevA" class="preview">
+                </div>
+                <div class="flex-1">
+                    <label for="fileB">Fingerprint B:</label>
+                    <input type="file" id="fileB" accept="image/*" required onchange="showPreview(this, 'prevB')" title="Upload Fingerprint B image">
+                    <img id="prevB" class="preview">
+                </div>
+            </div>
+            <button type="submit" class="btn-compare">Compare A vs B</button>
+        </form>
+        <div id="verifyResult" class="result"></div>
+        <img id="matchPatternManual" class="match-pattern">
+    </div>
+
+</div>
+
+<script>
+    function showPreview(input, imgId) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = document.getElementById(imgId);
+                img.src = e.target.result;
+                img.style.display = 'block';
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // 1. REGISTRATION
+    document.getElementById('registerForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('name', document.getElementById('regName').value);
+        formData.append('image', document.getElementById('regPhoto').files[0]);
+        try {
+            const res = await fetch('/register', { method: 'POST', body: formData });
+            const data = await res.json();
+            const resDiv = document.getElementById('regResult');
+            resDiv.style.display = 'block';
+            resDiv.className = 'result ' + (data.status === 'success' ? 'success' : 'error');
+            resDiv.innerText = data.message;
+        } catch (err) { alert("Server Error"); }
+    };
+
+    // 2. SERVER ID
+    document.getElementById('identifyForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('image', document.getElementById('checkPhoto').files[0]);
+        try {
+            const res = await fetch('/identify', { method: 'POST', body: formData });
+            const data = await res.json();
+            const resDiv = document.getElementById('idResult');
+            resDiv.style.display = 'block';
+            resDiv.className = 'result ' + (data.status === 'success' ? 'success' : 'error');
+            resDiv.innerText = data.message + " (" + (data.score || '') + ")";
+            
+            const img = document.getElementById('matchPatternDB');
+            if(data.image_data) {
+                img.src = "data:image/jpeg;base64," + data.image_data;
+                img.style.display = 'block';
+            } else { img.style.display = 'none'; }
+        } catch (err) { alert("Server Error"); }
+    };
+
+    // 3. MANUAL VERIFY
+    document.getElementById('verifyForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append('image1', document.getElementById('fileA').files[0]);
+        formData.append('image2', document.getElementById('fileB').files[0]);
+        try {
+            const res = await fetch('/verify_manual', { method: 'POST', body: formData });
+            const data = await res.json();
+            const resDiv = document.getElementById('verifyResult');
+            resDiv.style.display = 'block';
+            resDiv.className = 'result ' + (data.status === 'success' ? 'success' : 'error');
+            resDiv.innerText = data.message + " (" + data.score + ")";
+            
+            const img = document.getElementById('matchPatternManual');
+            if(data.image_data) {
+                img.src = "data:image/jpeg;base64," + data.image_data;
+                img.style.display = 'block';
+            } else { img.style.display = 'none'; }
+        } catch (err) { alert("Server Error"); }
+    };
+</script>
+
+</body>
+</html>
